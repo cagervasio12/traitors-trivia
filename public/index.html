@@ -9,8 +9,25 @@
 <body>
   <div class="container">
 
+    <!-- PASSWORD SCREEN -->
+    <div id="password-screen" class="landing">
+      <div class="crest">&#x1F3F0;</div>
+      <h1>The Traitors</h1>
+      <p class="subtitle">Game Night</p>
+      <div class="divider"></div>
+      <p class="flavor-text">
+        The castle doors are sealed. Speak the password to enter.
+      </p>
+      <div class="input-group">
+        <label for="game-password">Password</label>
+        <input type="password" id="game-password" placeholder="Enter the password&hellip;" autocomplete="off">
+      </div>
+      <div class="feedback" id="password-feedback"></div>
+      <button class="btn" id="password-btn">Enter</button>
+    </div>
+
     <!-- LANDING SCREEN -->
-    <div id="landing" class="landing">
+    <div id="landing" class="landing" style="display:none;">
       <div class="crest">&#x1F3F0;</div>
       <h1>The Traitors</h1>
       <p class="subtitle">Game Night</p>
@@ -22,12 +39,7 @@
         <label for="player-name">Enter Your Name</label>
         <input type="text" id="player-name" placeholder="Player or team name&hellip;" autocomplete="off">
       </div>
-      <div class="input-group" style="margin-top:16px;">
-        <label for="game-password">Game Password</label>
-        <input type="password" id="game-password" placeholder="Enter the password&hellip;" autocomplete="off">
-      </div>
-      <div class="feedback" id="login-feedback"></div>
-      <button class="btn" id="start-btn">Enter the Castle</button>
+      <button class="btn" id="start-btn">Begin the Game</button>
     </div>
 
     <!-- QUESTION SCREEN -->
@@ -65,13 +77,16 @@
   <script>
     const romanNumerals = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII'];
     let playerId = null;
+    let verifiedPassword = null;
 
+    const passwordScreen = document.getElementById('password-screen');
     const landingEl = document.getElementById('landing');
     const questionEl = document.getElementById('question-screen');
     const finishedEl = document.getElementById('finished-screen');
-    const nameInput = document.getElementById('player-name');
     const passwordInput = document.getElementById('game-password');
-    const loginFeedback = document.getElementById('login-feedback');
+    const passwordBtn = document.getElementById('password-btn');
+    const passwordFeedback = document.getElementById('password-feedback');
+    const nameInput = document.getElementById('player-name');
     const startBtn = document.getElementById('start-btn');
     const answerInput = document.getElementById('answer-input');
     const submitBtn = document.getElementById('submit-btn');
@@ -85,6 +100,7 @@
     }
 
     function showScreen(screen) {
+      passwordScreen.style.display = 'none';
       landingEl.style.display = 'none';
       questionEl.style.display = 'none';
       finishedEl.style.display = 'none';
@@ -102,24 +118,37 @@
       answerInput.focus();
     }
 
-    // Register player
+    // Step 1: Verify password (client-side check — server will re-verify on register)
+    passwordBtn.addEventListener('click', () => {
+      const pw = passwordInput.value;
+      if (!pw.trim()) { passwordInput.focus(); return; }
+      verifiedPassword = pw;
+      passwordFeedback.innerHTML = '';
+      showScreen(landingEl);
+      nameInput.focus();
+    });
+
+    passwordInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') passwordBtn.click();
+    });
+
+    // Step 2: Register player (server verifies password here)
     startBtn.addEventListener('click', async () => {
       const name = nameInput.value.trim();
-      const password = passwordInput.value.trim();
       if (!name) { nameInput.focus(); return; }
-      if (!password) { passwordInput.focus(); return; }
 
       startBtn.disabled = true;
-      loginFeedback.innerHTML = '';
       const res = await fetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, password })
+        body: JSON.stringify({ name, password: verifiedPassword })
       });
       const data = await res.json();
 
       if (res.status === 401) {
-        loginFeedback.innerHTML = '<span class="wrong">Wrong password&mdash;try again.</span>';
+        // Password was wrong — send them back to password screen
+        showScreen(passwordScreen);
+        passwordFeedback.innerHTML = '<span class="wrong">Wrong password&mdash;try again.</span>';
         passwordInput.value = '';
         passwordInput.focus();
         startBtn.disabled = false;
@@ -127,19 +156,13 @@
       }
 
       playerId = data.playerId;
-
-      // Fetch first question
       const qRes = await fetch('/api/question/' + playerId);
       const qData = await qRes.json();
       displayQuestion(qData);
       showScreen(questionEl);
     });
 
-    // Allow Enter key on name/password inputs
     nameInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') startBtn.click();
-    });
-    passwordInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') startBtn.click();
     });
 
@@ -165,7 +188,8 @@
           displayQuestion(data.next);
         }
       } else {
-        feedbackEl.innerHTML = '<span class="wrong">Not quite&mdash;try again, faithful one.</span>';
+        const hintText = data.hint ? ' ' + data.hint : '';
+        feedbackEl.innerHTML = '<span class="wrong">Not quite&mdash;try again.' + (data.hint ? '<br><em style="font-size:0.85rem;opacity:0.85">' + data.hint + '</em>' : '') + '</span>';
         answerInput.value = '';
         answerInput.focus();
       }

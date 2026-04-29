@@ -31,7 +31,7 @@ app.post('/api/register', (req, res) => {
   if (!name || !name.trim()) {
     return res.status(400).json({ error: 'Name is required' });
   }
-  if (!password || password.trim().toLowerCase() !== GAME_PASSWORD.toLowerCase()) {
+  if (!password || normalize(password) !== normalize(GAME_PASSWORD)) {
     return res.status(401).json({ error: 'Wrong password' });
   }
 
@@ -105,7 +105,8 @@ app.post('/api/answer/:playerId', (req, res) => {
     });
   }
 
-  res.json({ correct: false });
+  const hint = questions[player.currentQuestion].hint || null;
+  res.json({ correct: false, hint });
 });
 
 // Serve leaderboard page
@@ -116,7 +117,7 @@ app.get('/leaderboard', (req, res) => {
 // API: Clear leaderboard (admin)
 app.post('/api/admin/clear', (req, res) => {
   const { password } = req.body;
-  if (!password || password.trim().toLowerCase() !== GAME_PASSWORD.toLowerCase()) {
+  if (!password || normalize(password) !== normalize(GAME_PASSWORD)) {
     return res.status(401).json({ error: 'Wrong password' });
   }
   leaderboard.length = 0;

@@ -2,66 +2,79 @@
   {
     "number": 1,
     "question": "What state was Lauren born in?",
-    "answer": "Tennessee"
+    "answer": "Tennessee",
+    "hint": "Think country music capital — it's in the South."
   },
   {
     "number": 2,
     "question": "What state did Lauren attend high school in?",
-    "answer": "Missouri"
+    "answer": "Missouri",
+    "hint": "The Show-Me State — right in the middle of the country."
   },
   {
     "number": 3,
     "question": "What sport did Lauren play all 4 years of high school?",
-    "answer": "Tennis"
+    "answer": "Tennis",
+    "hint": "Think rackets, not cleats."
   },
   {
     "number": 4,
     "question": "What is Lauren's favorite movie?",
-    "answer": ["Legally Blonde", "You've Got Mail", "Youve Got Mail"]
+    "answer": ["Legally Blonde", "You've Got Mail", "Youve Got Mail"],
+    "hint": "There are two accepted answers — one involves a pink wardrobe, the other involves AOL."
   },
   {
     "number": 5,
     "question": "Where did Lauren work her first job?",
-    "answer": "Old Navy"
+    "answer": "Old Navy",
+    "hint": "Think affordable basics — fleece vests, performance fleece, gap-adjacent."
   },
   {
     "number": 6,
     "question": "Lauren's family had multiple of the same dog growing up. What breed?",
-    "answer": ["Black Lab", "Black Labrador", "Labrador"]
+    "answer": ["Black Lab", "Black Labrador", "Labrador"],
+    "hint": "America's most popular dog breed — and they had more than one."
   },
   {
     "number": 7,
     "question": "What has been Lauren's favorite vacation spot to date?",
-    "answer": ["Maui", "Hawaii", "Hawaii Maui", "Maui Hawaii", "Hawai"]
+    "answer": ["Maui", "Hawaii", "Hawaii Maui", "Maui Hawaii", "Hawai"],
+    "hint": "Think paradise — tropical island, stunning beaches, aloha spirit."
   },
   {
     "number": 8,
     "question": "What is Lauren's favorite store to shop at?",
-    "answer": "Goodwill"
+    "answer": "Goodwill",
+    "hint": "One person's trash is Lauren's treasure."
   },
   {
     "number": 9,
     "question": "Lauren and Chris considered two baby names before choosing Luca. What was the other name?",
-    "answer": "Phillip"
+    "answer": "Phillip",
+    "hint": "A classic, royal-sounding name — think princes and apostles."
   },
   {
     "number": 10,
     "question": "What color was Lauren's first car?",
-    "answer": "Red"
+    "answer": "Red",
+    "hint": "A bold, classic color — not silver, not white."
   },
   {
     "number": 11,
     "question": "What is Lauren's mixed drink of choice?",
-    "answer": ["Cranberry Vodka", "Vodka Cranberry"]
+    "answer": ["Cranberry Vodka", "Vodka Cranberry"],
+    "hint": "Two ingredients — a clear spirit and a tart red juice."
   },
   {
     "number": 12,
     "question": "What is Lauren's middle name?",
-    "answer": "Katherine"
+    "answer": "Katherine",
+    "hint": "A classic name — think queens and Katherines with a K."
   },
   {
     "number": 13,
     "question": "Where did Lauren first kiss Chris?",
-    "answer": ["Free Press Summer Fest", "FPSF", "Free Press"]
+    "answer": ["Free Press Summer Fest", "FPSF", "Free Press"],
+    "hint": "A Houston music festival — think outdoor summer concert vibes."
   }
 ]
