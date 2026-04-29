@@ -14,6 +14,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Load questions from JSON file
 const questions = JSON.parse(fs.readFileSync(path.join(__dirname, 'questions.json'), 'utf-8'));
 
+const GAME_PASSWORD = 'Luca Puca Shell';
+
 // In-memory storage
 const players = {}; // { id: { name, startTime, currentQuestion, finished, finishTime } }
 const leaderboard = []; // [{ name, time }] sorted by time
@@ -25,9 +27,12 @@ function normalize(str) {
 
 // API: Register a player
 app.post('/api/register', (req, res) => {
-  const { name } = req.body;
+  const { name, password } = req.body;
   if (!name || !name.trim()) {
     return res.status(400).json({ error: 'Name is required' });
+  }
+  if (!password || password.trim().toLowerCase() !== GAME_PASSWORD.toLowerCase()) {
+    return res.status(401).json({ error: 'Wrong password' });
   }
 
   const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
@@ -106,6 +111,17 @@ app.post('/api/answer/:playerId', (req, res) => {
 // Serve leaderboard page
 app.get('/leaderboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'leaderboard.html'));
+});
+
+// API: Clear leaderboard (admin)
+app.post('/api/admin/clear', (req, res) => {
+  const { password } = req.body;
+  if (!password || password.trim().toLowerCase() !== GAME_PASSWORD.toLowerCase()) {
+    return res.status(401).json({ error: 'Wrong password' });
+  }
+  leaderboard.length = 0;
+  io.emit('leaderboard-update', leaderboard);
+  res.json({ success: true });
 });
 
 // API: Get leaderboard

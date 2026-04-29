@@ -14,6 +14,12 @@
     <p class="lb-subtitle">Leaderboard</p>
     <div class="divider"></div>
 
+    <div style="text-align:center;margin-bottom:24px;">
+      <button id="clear-btn" onclick="clearLeaderboard()" style="background:transparent;border:1px solid var(--burgundy-light);color:var(--white-dim);font-family:'Cinzel',serif;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;padding:8px 20px;border-radius:4px;cursor:pointer;">
+        Clear Leaderboard
+      </button>
+    </div>
+
     <div id="lb-empty" class="lb-empty">Waiting for the first survivor&hellip;</div>
 
     <table class="lb-table" id="lb-table" style="display:none;">
@@ -72,6 +78,20 @@
       div.textContent = str;
       return div.innerHTML;
     }
-  </script>
+
+    async function clearLeaderboard() {
+      const password = prompt('Enter the game password to clear the leaderboard:');
+      if (!password) return;
+      const res = await fetch('/api/admin/clear', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      });
+      const data = await res.json();
+      if (res.status === 401) {
+        alert('Wrong password.');
+      }
+    }
+</script>
 </body>
 </html>

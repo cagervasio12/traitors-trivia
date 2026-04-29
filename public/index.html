@@ -22,6 +22,11 @@
         <label for="player-name">Enter Your Name</label>
         <input type="text" id="player-name" placeholder="Player or team name&hellip;" autocomplete="off">
       </div>
+      <div class="input-group" style="margin-top:16px;">
+        <label for="game-password">Game Password</label>
+        <input type="password" id="game-password" placeholder="Enter the password&hellip;" autocomplete="off">
+      </div>
+      <div class="feedback" id="login-feedback"></div>
       <button class="btn" id="start-btn">Enter the Castle</button>
     </div>
 
@@ -65,6 +70,8 @@
     const questionEl = document.getElementById('question-screen');
     const finishedEl = document.getElementById('finished-screen');
     const nameInput = document.getElementById('player-name');
+    const passwordInput = document.getElementById('game-password');
+    const loginFeedback = document.getElementById('login-feedback');
     const startBtn = document.getElementById('start-btn');
     const answerInput = document.getElementById('answer-input');
     const submitBtn = document.getElementById('submit-btn');
@@ -98,15 +105,27 @@
     // Register player
     startBtn.addEventListener('click', async () => {
       const name = nameInput.value.trim();
+      const password = passwordInput.value.trim();
       if (!name) { nameInput.focus(); return; }
+      if (!password) { passwordInput.focus(); return; }
 
       startBtn.disabled = true;
+      loginFeedback.innerHTML = '';
       const res = await fetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name })
+        body: JSON.stringify({ name, password })
       });
       const data = await res.json();
+
+      if (res.status === 401) {
+        loginFeedback.innerHTML = '<span class="wrong">Wrong password&mdash;try again.</span>';
+        passwordInput.value = '';
+        passwordInput.focus();
+        startBtn.disabled = false;
+        return;
+      }
+
       playerId = data.playerId;
 
       // Fetch first question
@@ -116,8 +135,11 @@
       showScreen(questionEl);
     });
 
-    // Allow Enter key on name input
+    // Allow Enter key on name/password inputs
     nameInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') startBtn.click();
+    });
+    passwordInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') startBtn.click();
     });
 

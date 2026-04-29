@@ -191,26 +191,45 @@ DNS changes take 10–30 minutes to kick in. After that, your custom domain will
 
 ---
 
-### PART 6 — Updating Your Questions After Deployment
+### PART 6 — Pushing Updates to Your Live Site
 
-If you edit `questions.json` later, here's how to push the changes live:
+Any time you make changes to the app files (questions, code, anything), follow these steps to push them live.
 
 1. Open PowerShell
 2. Navigate to your folder:
    ```
    cd "C:\Users\cgger\OneDrive\Documents\Claude Code Projects\traitors-trivia"
    ```
-3. Run these three commands one at a time:
+3. Run these three commands one at a time, pressing **Enter** after each:
    ```
    git add .
    ```
    ```
-   git commit -m "Updated questions"
+   git commit -m "Updated app"
    ```
    ```
    git push
    ```
-4. Render will automatically detect the change and redeploy in 2–3 minutes
+4. Render will automatically detect the change and redeploy — takes about 2–3 minutes
+5. You can watch the progress by going to your Render dashboard and clicking on your service — you'll see a **Deploying** status while it rebuilds
+
+> **Tip:** The message in quotes after `git commit -m` can say anything — it's just a note to yourself about what changed. For example: `"Added password"` or `"Updated questions"`.
+
+---
+
+### How to Use the New Features
+
+#### Game Password
+- Players now see a **Game Password** field on the landing page
+- The password is: **Luca Puca Shell**
+- Anyone who enters the wrong password will see an error and can't start the game
+- The password check ignores capitalization, so "luca puca shell" also works
+
+#### Clear the Leaderboard
+- On the leaderboard page (`/leaderboard`), there is a subtle **Clear Leaderboard** button at the top
+- Click it and enter the game password (**Luca Puca Shell**) to wipe all scores
+- This is useful if you want to do a practice run before the real game, or reset between rounds
+- The leaderboard will update instantly on all screens
 
 ---
 
