@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Traitors: Game Night</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="container">
+
+    <!-- LANDING SCREEN -->
+    <div id="landing" class="landing">
+      <div class="crest">&#x1F3F0;</div>
+      <h1>The Traitors</h1>
+      <p class="subtitle">Game Night</p>
+      <div class="divider"></div>
+      <p class="flavor-text">
+        You have been summoned to the castle. Prove your loyalty&mdash;answer all thirteen questions to survive the round table.
+      </p>
+      <div class="input-group">
+        <label for="player-name">Enter Your Name</label>
+        <input type="text" id="player-name" placeholder="Player or team name&hellip;" autocomplete="off">
+      </div>
+      <button class="btn" id="start-btn">Enter the Castle</button>
+    </div>
+
+    <!-- QUESTION SCREEN -->
+    <div id="question-screen" class="question-page" style="display:none;">
+      <div class="progress-bar-container">
+        <div class="progress-label">Question <span id="q-current">1</span> of <span id="q-total">13</span></div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="question-number" id="q-number">Question I</div>
+      <div class="question-text" id="q-text"></div>
+      <div class="answer-section">
+        <div class="feedback" id="feedback"></div>
+        <input type="text" id="answer-input" placeholder="Your answer&hellip;" autocomplete="off">
+        <button class="btn" id="submit-btn">Submit</button>
+      </div>
+    </div>
+
+    <!-- FINISHED SCREEN -->
+    <div id="finished-screen" class="finished-page" style="display:none;">
+      <div class="trophy">&#x1F3C6;</div>
+      <h2>You Survived!</h2>
+      <p class="completion-time">Your time</p>
+      <div class="time-value" id="finish-time">0:00</div>
+      <div class="divider" style="margin-bottom:20px;"></div>
+      <p class="message">
+        The round table has judged you worthy.<br>
+        Your name has been added to the shield.
+      </p>
+    </div>
+
+  </div>
+
+  <script>
+    const romanNumerals = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII'];
+    let playerId = null;
+
+    const landingEl = document.getElementById('landing');
+    const questionEl = document.getElementById('question-screen');
+    const finishedEl = document.getElementById('finished-screen');
+    const nameInput = document.getElementById('player-name');
+    const startBtn = document.getElementById('start-btn');
+    const answerInput = document.getElementById('answer-input');
+    const submitBtn = document.getElementById('submit-btn');
+    const feedbackEl = document.getElementById('feedback');
+
+    function formatTime(ms) {
+      const totalSec = Math.floor(ms / 1000);
+      const min = Math.floor(totalSec / 60);
+      const sec = totalSec % 60;
+      return min + ':' + String(sec).padStart(2, '0');
+    }
+
+    function showScreen(screen) {
+      landingEl.style.display = 'none';
+      questionEl.style.display = 'none';
+      finishedEl.style.display = 'none';
+      screen.style.display = '';
+    }
+
+    function displayQuestion(data) {
+      document.getElementById('q-current').textContent = data.current;
+      document.getElementById('q-total').textContent = data.total;
+      document.getElementById('q-number').textContent = 'Question ' + (romanNumerals[data.current - 1] || data.current);
+      document.getElementById('q-text').textContent = data.question;
+      document.getElementById('progress-fill').style.width = ((data.current - 1) / data.total * 100) + '%';
+      feedbackEl.innerHTML = '';
+      answerInput.value = '';
+      answerInput.focus();
+    }
+
+    // Register player
+    startBtn.addEventListener('click', async () => {
+      const name = nameInput.value.trim();
+      if (!name) { nameInput.focus(); return; }
+
+      startBtn.disabled = true;
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+      });
+      const data = await res.json();
+      playerId = data.playerId;
+
+      // Fetch first question
+      const qRes = await fetch('/api/question/' + playerId);
+      const qData = await qRes.json();
+      displayQuestion(qData);
+      showScreen(questionEl);
+    });
+
+    // Allow Enter key on name input
+    nameInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') startBtn.click();
+    });
+
+    // Submit answer
+    async function submitAnswer() {
+      const answer = answerInput.value.trim();
+      if (!answer) { answerInput.focus(); return; }
+
+      submitBtn.disabled = true;
+      const res = await fetch('/api/answer/' + playerId, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ answer })
+      });
+      const data = await res.json();
+      submitBtn.disabled = false;
+
+      if (data.correct) {
+        if (data.finished) {
+          document.getElementById('finish-time').textContent = formatTime(data.time);
+          showScreen(finishedEl);
+        } else {
+          displayQuestion(data.next);
+        }
+      } else {
+        feedbackEl.innerHTML = '<span class="wrong">Not quite&mdash;try again, faithful one.</span>';
+        answerInput.value = '';
+        answerInput.focus();
+      }
+    }
+
+    submitBtn.addEventListener('click', submitAnswer);
+    answerInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') submitAnswer();
+    });
+  </script>
+</body>
+</html>

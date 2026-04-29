@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaderboard — The Traitors: Game Night</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <div class="leaderboard-container">
+    <div style="text-align:center;font-size:48px;margin-bottom:10px;filter:drop-shadow(0 0 20px rgba(201,168,76,0.5))">&#x1F3F0;</div>
+    <h1>The Traitors</h1>
+    <p class="lb-subtitle">Leaderboard</p>
+    <div class="divider"></div>
+
+    <div id="lb-empty" class="lb-empty">Waiting for the first survivor&hellip;</div>
+
+    <table class="lb-table" id="lb-table" style="display:none;">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Name</th>
+          <th>Time</th>
+        </tr>
+      </thead>
+      <tbody id="lb-body"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const socket = io();
+    const lbBody = document.getElementById('lb-body');
+    const lbTable = document.getElementById('lb-table');
+    const lbEmpty = document.getElementById('lb-empty');
+
+    function formatTime(ms) {
+      const totalSec = Math.floor(ms / 1000);
+      const min = Math.floor(totalSec / 60);
+      const sec = totalSec % 60;
+      return min + ':' + String(sec).padStart(2, '0');
+    }
+
+    socket.on('leaderboard-update', (data) => {
+      if (data.length === 0) {
+        lbTable.style.display = 'none';
+        lbEmpty.style.display = '';
+        return;
+      }
+
+      lbEmpty.style.display = 'none';
+      lbTable.style.display = '';
+      lbBody.innerHTML = '';
+
+      data.forEach((entry, i) => {
+        const tr = document.createElement('tr');
+        const rank = i + 1;
+        let rankClass = 'lb-rank';
+        if (rank <= 3) rankClass += ' top-' + rank;
+
+        tr.innerHTML =
+          '<td class="' + rankClass + '">' + rank + '</td>' +
+          '<td class="lb-name">' + escapeHtml(entry.name) + '</td>' +
+          '<td>' + formatTime(entry.time) + '</td>';
+
+        lbBody.appendChild(tr);
+      });
+    });
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>

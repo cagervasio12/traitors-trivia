@@ -1,0 +1,67 @@
+[
+  {
+    "number": 1,
+    "question": "What state was Lauren born in?",
+    "answer": "Tennessee"
+  },
+  {
+    "number": 2,
+    "question": "What state did Lauren attend high school in?",
+    "answer": "Missouri"
+  },
+  {
+    "number": 3,
+    "question": "What sport did Lauren play all 4 years of high school?",
+    "answer": "Tennis"
+  },
+  {
+    "number": 4,
+    "question": "What is Lauren's favorite movie?",
+    "answer": ["Legally Blonde", "You've Got Mail", "Youve Got Mail"]
+  },
+  {
+    "number": 5,
+    "question": "Where did Lauren work her first job?",
+    "answer": "Old Navy"
+  },
+  {
+    "number": 6,
+    "question": "Lauren's family had multiple of the same dog growing up. What breed?",
+    "answer": ["Black Lab", "Black Labrador", "Labrador"]
+  },
+  {
+    "number": 7,
+    "question": "What has been Lauren's favorite vacation spot to date?",
+    "answer": ["Maui", "Hawaii", "Hawaii Maui", "Maui Hawaii", "Hawai"]
+  },
+  {
+    "number": 8,
+    "question": "What is Lauren's favorite store to shop at?",
+    "answer": "Goodwill"
+  },
+  {
+    "number": 9,
+    "question": "Lauren and Chris considered two baby names before choosing Luca. What was the other name?",
+    "answer": "Phillip"
+  },
+  {
+    "number": 10,
+    "question": "What color was Lauren's first car?",
+    "answer": "Red"
+  },
+  {
+    "number": 11,
+    "question": "What is Lauren's mixed drink of choice?",
+    "answer": ["Cranberry Vodka", "Vodka Cranberry"]
+  },
+  {
+    "number": 12,
+    "question": "What is Lauren's middle name?",
+    "answer": "Katherine"
+  },
+  {
+    "number": 13,
+    "question": "Where did Lauren first kiss Chris?",
+    "answer": ["Free Press Summer Fest", "FPSF", "Free Press"]
+  }
+]
